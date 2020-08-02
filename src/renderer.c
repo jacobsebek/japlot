@@ -12,6 +12,7 @@
 #include <ctype.h> // isdigit
 #include <pthread.h> // mutex
 #include <math.h> // fmod
+#include <string.h> // memmove
 
 static GPU_Target *target;
 static SDL_Window *win;
@@ -189,33 +190,55 @@ int window_draw() {
 			p.y += step.y;
 		}
 
-		// reset these back
-		p = (pointf){cam.x-fmod(cam.x, step.x), 
-					 cam.y-fmod(cam.y, step.y)};
-		pcam = (pointi){0, 0};
-
-		// number drawing stuff
-		char nums[20];
+		// ------ NUMBER DRAWING PART ------
 
 		pointf modlog = {fmod(wlog, 1.0), fmod(hlog, 1.0)};
 
 		pointi numstep = {(wlog < 0.0 ? "521" : "125")[(long)(floor(fabs(modlog.x)*3.0))]-'0',
 						  (hlog < 0.0 ? "521" : "125")[(long)(floor(fabs(modlog.y)*3.0))]-'0'};
+
+		// reset these back (almost identically)
+		p = (pointf){cam.x-fmod(cam.x, step.x)-step.x*numstep.x, 
+					 cam.y-fmod(cam.y, step.y)-step.y*numstep.y};
+		pcam = (pointi){0, 0};
+
+		// number drawing stuff
+		char nums[20];
+		const float char_scale = 0.25;
+		const pointi char_size = {font.char_w*char_scale, font.char_h*char_scale};
+
 		while (p.x <= cam.x+cam.w || p.y <= cam.y+cam.h) {
 			pcam = WORLD2CAM(p);
 
 			// Draw numbers
 			if ((long)abs(round(p.x/step.x)) % numstep.x == 0) {
-			if (p.x != 0.0) { // We dont want the 0s to overlap
 				sprintf(nums, "%.*f", wlog > 0.0 ? 0 : abs((int)floor(wlog)), p.x);
-				font_draw_string(target, pcam.x, zero.y+10, 0.25f, font, nums, font_encode);
-			}
+				if (atof(nums) == 0.0 && nums[0] == '-') { // this sometimes "bugs out" producing -0.0
+					memmove(nums, nums+1, 19);
+				}
+
+				int y = zero.y+4;
+				if (y+char_size.y > (int)settings.HEIGHT) y = settings.HEIGHT-char_size.y-4;
+				else if (y < 4) y = 4;
+
+				font_draw_string(target, pcam.x+4, y, char_scale, font, nums, font_encode);
+				//GPU_RectangleFilled(target, pcam.x+4, y, pcam.x+4+font.char_w, y+font.char_h, (SDL_Color){255,0,0,255});
 			}
 
-			//if (fmod(p.y/step.y, step.y*numstep.y) == 0) {
 			if ((long)abs(round(p.y/step.y)) % numstep.y == 0) {
-				sprintf(nums, "%.*f", hlog > 0.0 ? 0 : abs((int)floor(hlog)), -p.y);
-				font_draw_string(target, zero.x+6, pcam.y+10, 0.25f, font, nums, font_encode);
+				// sprintf returns the number of characters
+				int chars = sprintf(nums, "%.*f", hlog > 0.0 ? 0 : abs((int)floor(hlog)), -p.y);
+
+				if (atof(nums) != 0.0) { // we dont want 0's to overlap
+
+					int x = zero.x+4;
+					if (x+char_size.x*chars > (int)settings.WIDTH) x = settings.WIDTH-char_size.x*chars-4;
+					else if (x < 4) x = 4;
+
+					font_draw_string(target, x, pcam.y+4, char_scale, font, nums, font_encode);
+					//GPU_RectangleFilled(target, x, pcam.y+4, x+font.char_w, pcam.y+4+font.char_h, (SDL_Color){255,0,0,255});
+				}
+
 			}
 		
 			p.x += step.x;
