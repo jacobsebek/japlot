@@ -243,6 +243,10 @@ error_t object_remove(const char* name) {
 }
 
 error_t object_rename(const char* name, const char* newname) {
+
+	if (ERROR_FAIL(checkname(newname)))
+		return ERROR_CODE_FAIL;
+
 	object* obj = trie_remove(trie_objects, name, trie_encode);
 	if (obj == NULL){
 		error_throw("invalid object");
