@@ -4,6 +4,7 @@
 typedef struct font_s {
 	GPU_Image* img;
 	unsigned rows, cols;
+	unsigned char_w, char_h;
 } font_s;
 
 const font_s font_load(const char* filename, unsigned rows, unsigned columns, SDL_Color color);
