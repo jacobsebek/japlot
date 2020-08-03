@@ -31,6 +31,7 @@ void objects_init() {
 	object_add("abs", OT_CFUNC, fabs);
 	object_add("sgn", OT_CFUNC, sgn);
 	object_add("PI", OT_CONSTANT, &(double){M_PI});
+	object_add("e", OT_CONSTANT, &(double){M_E});
 }
 
 void objects_destroy() {
