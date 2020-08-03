@@ -113,7 +113,9 @@ static const char* path_to_name(const char* path) {
 // I use nextarg(NULL) (similar to strtok) to get additional arguments for individual command/res
 // the trie only cares about the actual commands (graph, plot ... )
 #define ASSERT(val, msg) if (!(val)) { printf(ANSI_COLOR_RED "Assertion failed : " ANSI_COLOR_RESET "%s\n", msg); return ERROR_CODE_FAIL; }
+#define ASSERT_EX(val, msg) if (!(val)) { printf(ANSI_COLOR_RED "Assertion failed : " ANSI_COLOR_RESET "%s\n", msg); goto exit; }
 #define REQUIRE_ARG(str) {const char* _arg = nextarg(NULL); ASSERT(_arg && strcmp(_arg, str) == 0, ANSI_COLOR_YELLOW"'"str"'"ANSI_COLOR_RESET" token expected")}
+#define REQUIRE_ARG_EX(str) {const char* _arg = nextarg(NULL); ASSERT_EX(_arg && strcmp(_arg, str) == 0, ANSI_COLOR_YELLOW"'"str"'"ANSI_COLOR_RESET" token expected")}
  
 
 // When a function is labeled as "safe", it means that it catches all errors
@@ -447,16 +449,11 @@ static error_t csfn_compute() {
 		while ((arg = nextarg(NULL)) != NULL) {
 			const char* name = arg;
 
-			if (arg = nextarg(NULL), arg == NULL || strcmp(arg, "=") != 0) {
-				vector_destroy(var_names);
-				ASSERT(0, ANSI_COLOR_YELLOW"'='"ANSI_COLOR_RESET" token expected");
-			}
+			REQUIRE_ARG_EX("=");
 
 			double val;
-			if (ERROR_FAIL(safe_compute(nextarg(NULL), &val))) {
-				vector_destroy(var_names);
-				return ERROR_CODE_FAIL;
-			}
+			if (ERROR_FAIL(safe_compute(nextarg(NULL), &val)))
+				goto exit;
 
 			// with x you can do range stuff (x = 0 .. 1 + 0.1)
 			if (strcmp(name, "x") == 0 && (arg = nextarg(NULL)) != NULL && strcmp(arg, "..") == 0) {
@@ -467,47 +464,32 @@ static error_t csfn_compute() {
 				const char* args[2];
 				args[0] = nextarg(NULL);
 
-				if (args[0] == NULL) {
-					vector_destroy(var_names);
-					ASSERT(0, "Missing function definition");
-				}
+				ASSERT_EX(args[0], "Missing function definition");
 
-				if (arg = nextarg(NULL), arg == NULL || strcmp(arg, "+") != 0) {
-					vector_destroy(var_names);
-					ASSERT(0, ANSI_COLOR_YELLOW"'+'"ANSI_COLOR_RESET" token expected");
-				}
+				REQUIRE_ARG_EX("+");
 
 				args[1] = nextarg(NULL);
 
 				if (ERROR_FAIL(safe_compute(args[0], &range_end)) |
-					ERROR_FAIL(safe_compute(args[1], &range_step))) {
-
-					vector_destroy(var_names);
-					return ERROR_CODE_FAIL;
-				}
+					ERROR_FAIL(safe_compute(args[1], &range_step)))
+					goto exit;
 			} else {
 				if (ERROR_FAIL(object_add(name, OT_VARIABLE, &val))) {
 					ERROR_MSG("adding a variable");
-					vector_destroy(var_names);
-					return ERROR_CODE_FAIL;
+					goto exit;
 				}
 				vector_append(var_names, (void*)name);
 			}
 
 			if ((arg = nextarg(NULL)) == NULL) break;
-			if (strcmp(arg, ",") != 0) {
-				vector_destroy(var_names);
-				ASSERT(0, ANSI_COLOR_YELLOW"','"ANSI_COLOR_RESET" token expected");
-			}
+			ASSERT_EX(strcmp(arg, ",") == 0, ANSI_COLOR_YELLOW"','"ANSI_COLOR_RESET" token expected");
 		}	
 	}
 
 	if (!is_ranged) {
 		double result;
-		if (ERROR_FAIL(safe_compute(func, &result))) {
-			vector_destroy(var_names);
-			return ERROR_CODE_FAIL;
-		}
+		if (ERROR_FAIL(safe_compute(func, &result)))
+			goto exit;
 
 		if (out == stdout)
 			fprintf(out, ANSI_COLOR_GREEN "%.2lf\n" ANSI_COLOR_RESET, result);
@@ -516,17 +498,15 @@ static error_t csfn_compute() {
 
 	} else {
 		formula_s formula;
-		if (ERROR_FAIL(safe_lex(func, &formula))) {
-			vector_destroy(var_names);
-			return ERROR_CODE_FAIL;
-		}
+		if (ERROR_FAIL(safe_lex(func, &formula)))
+			goto exit;
 		
 		size_t i = 0;
-		for (double x = range_start; x <= range_end; x += range_step) {
+		for (double x = range_start; x <= range_end; x += range_step, i++) {
 			if (i == SET_MAXLENGTH) {
 				error_throw_val("range is too big, max size is %ld", SET_MAXLENGTH);	
 				ERROR_MSG("computing");
-				vector_destroy(var_names);
+				goto exit;
 			}
 
 			double val;
@@ -539,13 +519,22 @@ static error_t csfn_compute() {
 				
 		}
 
+		printf(ANSI_COLOR_GREEN "%lu total values calculated\n"ANSI_COLOR_RESET, i);
 		free(formula.toks);
 	}
 
 	if (out != stdout) fclose(out);
-
 	vector_destroy(var_names);
+
 	return ERROR_CODE_OK;
+
+	// Having all the cleanup code here so it doesn't have to be repeated
+	exit :
+
+	if (out != stdout) fclose(out);
+	vector_destroy(var_names);
+
+	return ERROR_CODE_FAIL;
 }
 
 static int csfn_remove() {
