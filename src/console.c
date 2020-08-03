@@ -164,7 +164,7 @@ static error_t safe_compute(const char* func, double* result) {
 
 static _Bool isnumber(const char* str, _Bool point) {
 	for (const char* c = str; *c; c++) {
-		if (!isspace(*c) && !isdigit(*c) && !(point && *c == '.')) {
+		if (!isspace(*c) && !isdigit(*c) && *c != '-' && !(point && *c == '.')) {
 			return 0;
 		}
 
@@ -409,6 +409,7 @@ static error_t csfn_plot() {
 
 	if (ERROR_FAIL(plot_add(namebuf, coords, lastp-coords, color))) {
 		ERROR_MSG("adding a set");	
+		fclose(file);
 		return ERROR_CODE_FAIL;
 	}
 
@@ -645,7 +646,7 @@ static error_t csfn_cam() {
 		if (ERROR_FAIL(safe_atof(&newpos.y, y))) return ERROR_CODE_FAIL;
 
 		cam.x = newpos.x-cam.w/2;
-		cam.y = newpos.y-cam.h/2;
+		cam.y = (-newpos.y)-cam.h/2;
 
 		printf(ANSI_COLOR_GREEN "Camera anchored to "ANSI_COLOR_YELLOW"[%.2lf, %.2lf]\n" ANSI_COLOR_RESET, newpos.x, newpos.y);
 	} else if (strcmp(action, "scale") == 0) {
@@ -657,6 +658,8 @@ static error_t csfn_cam() {
 		pointf newsize;
 		if (ERROR_FAIL(safe_atof(&newsize.x, w))) return ERROR_CODE_FAIL;
 		if (ERROR_FAIL(safe_atof(&newsize.y, h))) return ERROR_CODE_FAIL;
+
+		ASSERT(newsize.x > 0 && newsize.y > 0, "positive scale size expected");
 
 		cam.x -= (newsize.x-cam.w)/2;
 		cam.y -= (newsize.y-cam.h)/2;
