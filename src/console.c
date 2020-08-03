@@ -393,10 +393,8 @@ static error_t csfn_plot() {
 	pointf* lastp = coords;
 	
 	while (lastp-coords < SET_MAXLENGTH) {
-		fscanf(file, "%lf %lf", &lastp->x, &lastp->y);
+		if (fscanf(file, "%lf %lf", &lastp->x, &lastp->y) != 2) break;
 		lastp++;
-
-		if (feof(file)) break;
 	}
 
 	if (!feof(file))
