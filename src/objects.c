@@ -230,7 +230,7 @@ error_t object_remove(const char* name) {
 		}
 	}
 
-	for (size_t i = 0; i < vector_length(dumps[OT_FUNCTION]); i++) {
+	/*for (size_t i = 0; i < vector_length(dumps[OT_FUNCTION]); i++) {
 		ds_trie_dump* dump = (ds_trie_dump*)vector_get(dumps[OT_FUNCTION], i);
 		formula_s formula = *((object*)dump->data)->func;
 
@@ -238,7 +238,7 @@ error_t object_remove(const char* name) {
 			error_throw_str("Object is used in the function "ANSI_COLOR_YELLOW"'%s'"ANSI_COLOR_RESET, dump->name );
 			return ERROR_CODE_FAIL;
 		}
-	}
+	}*/
 
 	return generic_free(trie_remove(trie_objects, name, trie_encode));	
 }

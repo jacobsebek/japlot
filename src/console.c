@@ -121,7 +121,7 @@ static const char* path_to_name(const char* path) {
 // When a function is labeled as "safe", it means that it catches all errors
 // thus no need to ERROR_MSG when calling it
 
-static error_t safe_lex(const char* func, formula_s *formula) {
+static error_t safe_lex(const char* func, formula_s *formula, _Bool should_validate) {
 
 	ASSERT(func, "missing function definition");
 
@@ -132,7 +132,7 @@ static error_t safe_lex(const char* func, formula_s *formula) {
 		return ERROR_CODE_FAIL;
 	}
 
-	if (ERROR_FAIL(validate(*formula))) {
+	if (should_validate && ERROR_FAIL(validate(*formula))) {
 		ERROR_MSG("verifying");
 		return ERROR_CODE_FAIL;
 	}
@@ -310,7 +310,7 @@ static error_t csfn_mod() {
 			return ERROR_CODE_FAIL;
 		break;
 		case OT_FUNCTION :
-			if (ERROR_FAIL(safe_lex(arg, obj->func)))
+			if (ERROR_FAIL(safe_lex(arg, obj->func, 0)))
 				return ERROR_CODE_FAIL;
 
 			printf(ANSI_COLOR_GREEN "Function " ANSI_COLOR_YELLOW "'%s'" ANSI_COLOR_GREEN " modified\n" ANSI_COLOR_RESET, obj_name);
@@ -348,7 +348,7 @@ static error_t csfn_graph() {
 	ASSERT(form, "Missing function definition");
 
 	formula_s formula;
-	if (ERROR_FAIL(safe_lex(form, &formula)))
+	if (ERROR_FAIL(safe_lex(form, &formula, 1)))
 		return ERROR_CODE_FAIL;
 
 	SDL_Color color = *nextcolor();
@@ -497,7 +497,7 @@ static error_t csfn_compute() {
 
 	} else {
 		formula_s formula;
-		if (ERROR_FAIL(safe_lex(func, &formula)))
+		if (ERROR_FAIL(safe_lex(func, &formula, 1)))
 			goto exit;
 		
 		size_t i = 0;
@@ -562,7 +562,7 @@ static int csfn_addfunc() {
 	REQUIRE_ARG("=");
 
 	formula_s formula;
-	if (ERROR_FAIL(safe_lex(nextarg(NULL), &formula)))
+	if (ERROR_FAIL(safe_lex(nextarg(NULL), &formula, 0)))
 		return ERROR_CODE_FAIL;
 
 	if (ERROR_FAIL(object_add(func_name, OT_FUNCTION, &formula))) {
