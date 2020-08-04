@@ -16,17 +16,17 @@ typedef struct set_s set_s;
 #define SETS_MAXNUM 2LU
 
 typedef struct formula_s {
-	token* toks;
-	size_t numtoks;
+    token* toks;
+    size_t numtoks;
 } formula_s;
 
 typedef struct set_s {
-	struct set_s *next, *prev; // this is actually a linked list node
+    struct set_s *next, *prev; // this is actually a linked list node
 
     pointf *coords;
     size_t length;
 
-	formula_s formula;
+    formula_s formula;
 
     _Bool shown;
     SDL_Color col_point, col_line;
@@ -40,20 +40,20 @@ typedef struct set_s {
 // A generic object
 typedef struct object {
 
-	enum {
-		OT_CONSTANT = 0, OT_VARIABLE, OT_FUNCTION, OT_CFUNC, OT_SET
-	} type;
+    enum {
+        OT_CONSTANT = 0, OT_VARIABLE, OT_FUNCTION, OT_CFUNC, OT_SET
+    } type;
 
-	_Bool hidden;
+    _Bool hidden;
 
-	union {
-		void* data; // GENERIC ACCESS
+    union {
+        void* data; // GENERIC ACCESS
 
-		double (*cfunc)(double); // OT_CFUNC
-		double* val; //OT_CONSTANT, OT_VARIABLE
-		formula_s* func; // OT_FUNCTION
-		set_s* set; //OT_SET
-	};
+        double (*cfunc)(double); // OT_CFUNC
+        double* val; //OT_CONSTANT, OT_VARIABLE
+        formula_s* func; // OT_FUNCTION
+        set_s* set; //OT_SET
+    };
 
 } object;
 

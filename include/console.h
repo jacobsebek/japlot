@@ -3,9 +3,9 @@
 #include "SDL.h"
 
 #ifdef _WIN32
-	#define CLEAR "cls"
+    #define CLEAR "cls"
 #else
-	#define CLEAR "clear"
+    #define CLEAR "clear"
 #endif
 
 #define COMMAND_MAXLEN 128LU
