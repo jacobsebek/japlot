@@ -1,4 +1,5 @@
 #pragma once
+#define VERSION "20.32"
 
 #include "SDL.h"
 

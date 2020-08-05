@@ -45,7 +45,7 @@ int window_init() {
     }
 
     // Create a window supporing OpenGL 
-    win = SDL_CreateWindow("JaPlot calculator 0.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, settings.WIDTH, settings.HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    win = SDL_CreateWindow("JaPlot calculator "VERSION, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, settings.WIDTH, settings.HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     // Create and OpenGL context
     GPU_SetInitWindow(SDL_GetWindowID(win));

@@ -1011,7 +1011,7 @@ static void console(volatile _Atomic _Bool* sigquit) {
     system(CLEAR);
     printf("Copyright (c) 2020 Jakub Sebek\n");
     printf("Copyright (c) 2019 Jonathan Dearborn (SDL_gpu library)\n");
-    printf("JaPlot console 0.1 - enter 'help' if you are new!\n");
+    printf("JaPlot shell "VERSION" - enter 'help' if you are new!\n");
 
     FILE* input_file = stdin;
 
