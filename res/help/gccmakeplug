@@ -1,0 +1,15 @@
+Creates a plugin from a .c source file using the GCC compiler
+
+Format : gccmakeplug [source file path]
+
+This is a convenience command for compiling simple single source file plugins
+using GCC, you must have gcc in PATH for the command to find it.
+It outputs the plugin the path of the executable
+
+The command invokes this shell command :
+"gcc [source file path] -c -fPIC -o ./tmp.o && gcc tmp.o -shared -o ./[source file name].[system specific extension]"
+
+Examples :
+
+gccmakeplug C:/Code/plugin.c
+__This outputs "plugin.[system specific extension]" into JaPlot's current folder

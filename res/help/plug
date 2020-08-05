@@ -1,0 +1,10 @@
+Loads a function from a plugin
+
+Format : plug [function name] < [plugin path]
+
+This command looks for a function with the specified name in the specified plugin
+and adds with the same name to JaPlot
+Examples :
+
+plug tan < trigonomentry.dll
+plug sawtooth < plugins/sound.dll

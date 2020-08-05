@@ -1,0 +1,10 @@
+Sets the color of a set
+
+Format : color [set name] [color]
+
+The possible colors are : 
+RED, BLUE, GREEN, YELLOW, MAGENTA, ORANGE, BLACK, WHITE, GREY, CYAN, LIME, BROWN
+Examples :
+
+color s0 BLUE
+color myGraph MAGENTA

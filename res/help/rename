@@ -1,0 +1,8 @@
+Renames an object
+
+Format : rename [obejct name] to [new name]
+
+Examples :
+
+rename myVar to myVar2
+rename g0 to graph

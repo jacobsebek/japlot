@@ -212,7 +212,7 @@ static error_t add_var(_Bool isconst) {
         return ERROR_CODE_FAIL; 
     }
 
-    printf(ANSI_COLOR_GREEN "Variable "ANSI_COLOR_YELLOW"'%s'"ANSI_COLOR_GREEN" (%.2lf) added\n" ANSI_COLOR_RESET, var_name, result);
+    printf(ANSI_COLOR_GREEN "%s "ANSI_COLOR_YELLOW"'%s'"ANSI_COLOR_GREEN" (%.2lf) added\n" ANSI_COLOR_RESET, isconst ? "Constant" : "Variable",  var_name, result);
 
     return ERROR_CODE_OK;
 }
@@ -704,12 +704,14 @@ static error_t csfn_set() {
 // format : plug from ~/jpplugins/plugin.so myFunc
 static error_t csfn_plug() {
 
-    {const char* from = nextarg(NULL);
-     ASSERT(from && strcmp(from, "from") == 0, "missing 'from' specifier");}
+    const char* cfunc_name = nextarg(NULL);
+    ASSERT(cfunc_name, "Missing function name");
+
+	REQUIRE_ARG("<");
 
     char plugin_path_buf[COMMAND_MAXLEN] = {0};
     char* plugin_path = nextarg(NULL);
-    ASSERT(plugin_path, "plugin path not specified");
+    ASSERT(plugin_path, "Plugin path not specified");
     strcpy(plugin_path_buf, plugin_path);
     plugin_path = plugin_path_buf;
 
@@ -717,16 +719,14 @@ static error_t csfn_plug() {
     if (!dot || dot[1] == '\\' || dot[1] == '/')
         strcat(plugin_path, PLUGIN_EXTENSION);
 
-    const char* cfunc_name = nextarg(NULL);
-    ASSERT(cfunc_name, "missing function name");
-
     // Load the function from the plugin
     void* dlhandle = dlopen(plugin_path, RTLD_LAZY);
     ASSERT(dlhandle, "plugin not found");
 
     void* cfunc = dlsym(dlhandle, cfunc_name);
     if (cfunc == NULL) {
-        printf(ANSI_COLOR_RED "plugin function not found" ANSI_COLOR_RESET);
+		error_throw("Plugin function not found");
+		ERROR_MSG("plugging");
         dlclose(dlhandle);
         return ERROR_CODE_FAIL;
     }
@@ -912,6 +912,25 @@ static error_t csfn_list() {
     return ERROR_CODE_OK;
 }
 
+static error_t csfn_help() {
+	const char* command_name = nextarg(NULL);
+
+	if (command_name != NULL) {
+		char fpath[COMMAND_MAXLEN-5+12+1];
+		strcpy(fpath, "../res/help/");
+		strcat(fpath, command_name);
+
+		FILE* file = fopen(fpath, "r");
+		ASSERT(file, "Couldn't find help file");
+
+		putchar('\n');
+		while (!feof(file))
+			putchar(getc(file));
+	}
+
+	return ERROR_CODE_OK;
+}
+
 // ---- Console initialization ----
 static void console(volatile _Atomic _Bool*);
 
@@ -923,6 +942,7 @@ void* console_start(void* arg) {
     trie_add(trie_commands, "cam", trie_encode, csfn_cam);
 
     trie_add(trie_commands, "echo", trie_encode, csfn_echo);
+    trie_add(trie_commands, "help", trie_encode, csfn_help);
     trie_add(trie_commands, "set", trie_encode, csfn_set);
 
     trie_add(trie_commands, "calc", trie_encode, csfn_compute);

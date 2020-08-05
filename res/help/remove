@@ -1,0 +1,8 @@
+Removes an object
+
+Format : remove [object name]
+
+Examples :
+
+remove myVar
+remove g0

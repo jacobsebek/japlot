@@ -1,0 +1,8 @@
+(Used in scripts) Writes to the shell
+
+Format : echo [message]
+
+Example :
+
+echo "Hello, world!"
+Hello, world!

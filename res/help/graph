@@ -1,0 +1,13 @@
+Graphs a function
+
+Format : graph [expression]
+         graph [graph name] = [expression]
+
+If the graph name is not specified, it is set to "g0", "g1" and so on..
+The color is set according to a continuous pattern (which wraps around)
+The line width or color can be changed using the "color" and "line" commands
+
+Examples :
+
+graph sin(x)
+graph myGraph = sqrt(x^2)

@@ -1,0 +1,9 @@
+Modifies variables and functions
+
+Format : modif [variable or function name] [expression]
+
+Constants cannot be modified.
+Examples :
+
+modif myVar 7^2
+modif myFunc x^2 

@@ -1,0 +1,9 @@
+Declares a variable
+
+Format : var [constant name] = [expression]
+
+The value can be modified using the "modif" command
+Examples :
+
+var n = 12
+var myVar = sqrt(12)

@@ -1,0 +1,41 @@
+Calculates an expression
+
+Format : calc [expression]
+         calc > [file] [expression]
+         calc [*] for [variable] = [expression] , [*] 
+		 calc [*] for [*] x = [range start] .. [range end] + [range step] , [*]
+
+This command is the heart of calculation in JaPlot, it allows you to calculate
+a simple expression with one output or many outputs in a range.
+You can specify an output file too (compatible with the 'plot' function)
+Examples of simple usage with outputs :
+
+calc 2*PI
+6.28
+
+calc sin(-0.7PI)
+-0.81
+
+For keyowrd :
+When the command detects a 'for' keyword after the expression, it adds all the
+specified variables and removes them afterwards.
+Examples of the 'for' keyword with outputs :
+
+calc 2x for x = 12^2
+288.00
+
+calc a*b*c for a = 0.4*10 , b = sqrt(81) , c = 9/3 
+108.00
+
+Ranges :
+When the command detects a range usage when specifying the x variable (only x),
+it calculates all values in the range with the desired step (inclusively). 
+Examples of ranges with outputs :
+
+calc n/x for n = 1 , x = 0 .. 1 + 0.1
+[0.00, Infinity]
+[0.25, 4.00]
+[0.50, 2.00]
+[0.75, 1.33]
+[1.00, 1.00]
+5 total values calculated

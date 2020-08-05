@@ -1,0 +1,11 @@
+Changes the line width (thickness) of a set in pixels
+
+Format : line [set name] [line width]
+
+The [line width] can range anywhere from 1 to 8 (inclusive),
+if it is outside of this range, the value is clamped.
+
+Examples :
+
+line mySet 6
+line g5 1

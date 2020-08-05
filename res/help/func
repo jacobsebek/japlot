@@ -1,0 +1,11 @@
+Declares a function
+
+Format : func [function name] = [expression]
+
+The function is not validated upon declaration, so errors
+can happen when using it (unknown variables, operators etc.)
+
+Examples :
+
+func myFunc = sin(x+0.5PI)
+func f = 1/x

@@ -1,0 +1,9 @@
+Declares a constant
+
+Format : const [constant name] = [expression]
+
+Examples :
+
+const PI = 3.14
+const e = 2.72
+const n = 100*(12/sin(1))

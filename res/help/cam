@@ -1,0 +1,11 @@
+Manipulates the camera
+
+Format : cam move [x constant] [y constant]
+         cam scale [x constant] [y constant]
+
+This commands moves and scales the camera (around the center).
+Examples :
+
+cam scale 10 10
+cam move 0 0
+__Now the camera is looking directly at [0, 0] and it sees x and y values from -5 to 5

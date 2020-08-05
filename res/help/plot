@@ -1,0 +1,20 @@
+Plots points from a file
+
+Format : plot [file path]
+         plot [set name] < [file path]
+
+The command reads numbers seperated by spaces from the specified file
+Every two numbers make up a coordinate (x, y)
+Example file :
+-5 1
+-4 2
+-3 3
+This is defining three points ([-5, 1], [-4, 2], [-3, 3])
+The preffered extension is .jpp but it can be anything
+
+If the plot name is not specified, it is set to "p0", "p1" and so on..
+
+Examples :
+
+plot file.jpp
+plot myPlot < C:/folder/data.txt

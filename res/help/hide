@@ -1,0 +1,6 @@
+Hides an object
+
+Format : hide [object name]
+
+If a set is hidden, it cannot be seen, 
+if for example a variable is hidden, it cannot be used.

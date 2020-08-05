@@ -1,0 +1,21 @@
+Lists all objects
+
+Format : list
+         list [object type]
+
+The possible [object type]s are : "consts", "vars", "funcs", "cfuncs", "sets"
+"Cfuncs" are functions loaded from plugins
+Examples with outputs :
+
+list
+Constants   Variables   Functions   CFuncs      Sets
+PI                                  abs
+e                                   cos
+                                    sgn
+                                    sin
+                                    sqrt
+
+list consts
+Constants
+PI          3.14
+e           2.72
