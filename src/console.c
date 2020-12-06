@@ -501,7 +501,7 @@ static error_t csfn_compute() {
             goto exit;
         
         size_t i = 0;
-        for (double x = range_start; x <= range_end; x += range_step, i++) {
+        for (double x = range_start; x <= range_end+range_step/2; x += range_step, i++) {
             if (i == SET_MAXLENGTH) {
                 error_throw_val("range is too big, max size is %ld", SET_MAXLENGTH);    
                 ERROR_MSG("computing");
